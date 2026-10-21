@@ -79,7 +79,21 @@ function adultHelpSection(){return `<section class="adult-help content" id="help
 
 function setupLearning(){
  const tools=document.querySelector('#badge-tools');if(!tools)return;
- const search=document.querySelector('#badge-search'),kind=document.querySelector('#badge-kind'),cards=[...document.querySelectorAll('[data-badge-kind]')],result=document.querySelector('#badge-result'),empty=document.querySelector('#badge-empty');
- function filter(){const query=search.value.trim().toLocaleLowerCase();let count=0;for(const card of cards){const show=(kind.value==='all'||kind.value===card.dataset.badgeKind)&&card.dataset.badgeSearch.includes(query);card.hidden=!show;if(show)count++;}result.textContent=`${count} ${count===1?'subject':'subjects'} to explore`;empty.hidden=count!==0;}
- tools.hidden=false;search.addEventListener('input',filter);kind.addEventListener('change',filter);document.querySelector('#badge-reset').addEventListener('click',()=>{search.value='';kind.value='all';filter();search.focus();});
+ const search=document.querySelector('#badge-search'),kind=document.querySelector('#badge-kind'),cards=[...document.querySelectorAll('#badge-grid [data-badge-kind]')],result=document.querySelector('#badge-result'),empty=document.querySelector('#badge-empty');
+ const pager=document.querySelector('#badge-pagination'),previous=document.querySelector('#badge-previous'),next=document.querySelector('#badge-next'),pageLabel=document.querySelector('#badge-page'),pageSize=24;
+ let currentPage=0;
+ function render(){
+  const words=search.value.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean),selected=kind.value;
+  const matches=cards.filter(card=>{
+   const matchesKind=selected==='all'||selected===card.dataset.badgeKind||(selected==='challenges'&&card.dataset.badgeKind.endsWith('challenge'))||(selected.startsWith('section-')&&card.dataset.badgeSections.split(' ').includes(selected.slice(8)));
+   return matchesKind&&words.every(word=>card.dataset.badgeSearch.includes(word));
+  });
+  const total=matches.length,pageCount=Math.max(1,Math.ceil(total/pageSize));currentPage=Math.min(currentPage,pageCount-1);
+  const visible=new Set(matches.slice(currentPage*pageSize,(currentPage+1)*pageSize));for(const card of cards)card.hidden=!visible.has(card);
+  result.textContent=total?`${total} ${total===1?'guide':'guides'} found · Showing ${currentPage*pageSize+1}–${Math.min((currentPage+1)*pageSize,total)}`:'No matching guides';
+  empty.hidden=total!==0;pager.hidden=pageCount<=1;previous.disabled=currentPage===0;next.disabled=currentPage===pageCount-1;pageLabel.textContent=`Page ${currentPage+1} of ${pageCount}`;
+ }
+ function filter(){currentPage=0;render();}
+ function turnPage(delta){currentPage+=delta;render();result.tabIndex=-1;result.focus({preventScroll:true});result.scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});}
+ tools.hidden=false;search.addEventListener('input',filter);kind.addEventListener('change',filter);previous.addEventListener('click',()=>turnPage(-1));next.addEventListener('click',()=>turnPage(1));document.querySelector('#badge-reset').addEventListener('click',()=>{search.value='';kind.value='all';filter();search.focus();});render();
 }
