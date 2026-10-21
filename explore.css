@@ -10,3 +10,27 @@
 @media(max-width:360px){.adventure-hero h1{font-size:38px}.story-hero h1{font-size:37px}.activity-card{grid-template-columns:54px minmax(0,1fr);gap:13px;padding:20px 16px}.activity-card .activity-symbol{width:52px;height:52px}.activity-card .icon{width:34px;height:34px}.activity-card h3{font-size:23px}.challenge-band{padding-inline:16px}.quiz-card{padding:21px 16px}.challenge-intro h2{font-size:32px}.quiz-card legend{font-size:25px}.first-visit-meetings>div{flex-direction:column;align-items:flex-start;gap:5px}.campfire-strip>p{font-size:23px}}
 @media(prefers-reduced-motion:reduce){.campfire-flame{animation:none!important}}
 @media print{.campfire-strip,.hero-actions,.filter-group,.quiz-card,.first-visit-kit>.button,.checklist-progress button{display:none!important}.adventure-hero,.story-hero,.story-community,.first-visit-section{display:block}.activity-grid,.story-values{grid-template-columns:repeat(3,1fr)}.story-crest{width:160px;margin:20px auto}.first-visit-section{break-before:page}.visit-checklist{border:0}.checklist-local{display:none}.contact-trap{display:none!important}}
+
+/* Toolkit resources keep the group's existing paper, scarf colours and typography. */
+.site-footer .ssa-logo{width:230px;max-width:100%;height:auto;flex:0 0 auto;display:block}
+.official-resources{margin-top:42px;padding:40px 0;border-top:1px solid var(--line);scroll-margin-top:30px}
+.resource-heading{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:end;margin-bottom:30px}
+.resource-heading>p{max-width:510px;font-size:16px;margin:0}
+.resource-heading h2{margin-top:12px}.resource-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.resource-card{padding:25px;border:1px solid var(--line);border-radius:18px;display:flex;flex-direction:column;align-items:flex-start;min-width:0}
+.resource-card:nth-child(3n+1){background:#ffedb8}.resource-card:nth-child(3n+2){background:#d7eafa}.resource-card:nth-child(3n){background:#e6e8df}
+.resource-card .activity-symbol{width:48px;height:48px;margin:0 0 14px;background:var(--paper)}
+.resource-card .icon{width:28px;height:28px}.resource-card .resource-kind{font-size:10px;font-weight:700;margin:0 0 12px}
+.resource-card h3{font-size:29px}.resource-card>p:not(.resource-kind){font-size:14px;margin:13px 0 20px;line-height:1.8}
+.resource-card>a{font-size:13px;margin-top:auto;min-height:44px;display:flex;align-items:center;max-width:100%;overflow-wrap:anywhere}
+.resource-note{font-size:12px;max-width:800px;line-height:1.9}
+.scouting-film{margin-top:30px;padding:30px;border-radius:18px;background:#e8eddf;display:flex;justify-content:space-between;align-items:center;gap:30px}
+.scouting-film h3{font-size:36px;margin-top:12px}.scouting-film p:not(.eyebrow){font-size:14px}
+.adult-help{margin-top:36px;padding:36px;border-radius:20px;background:var(--green);color:var(--paper);display:grid;grid-template-columns:1fr 1fr;gap:50px;scroll-margin-top:30px}
+.adult-help h2{margin-top:15px;font-size:clamp(36px,4vw,52px)}.adult-help>div>p:not(.eyebrow){font-size:16px;line-height:1.8}.adult-help .button{margin-top:25px}
+.help-ideas article+article{border-top:1px solid #ffffff30;margin-top:19px;padding-top:19px}.help-ideas h3{font-size:26px}.help-ideas article p{font-size:14px;margin-top:8px}
+.help-ideas .help-note{font-size:12px;line-height:1.8}.help-ideas>a{font-size:12px;display:inline-block;padding:12px 0;overflow-wrap:anywhere}
+@media(max-width:1000px){.resource-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.adult-help{gap:30px;padding:30px}}
+@media(max-width:600px){.site-footer .ssa-logo{width:220px}.resource-heading{grid-template-columns:1fr;gap:18px}.resource-heading h2{font-size:39px}.resource-heading>p{font-size:14px}.official-resources{margin-top:30px;padding-top:30px}.resource-grid{grid-template-columns:1fr;gap:16px}.resource-card{padding:23px}.resource-card h3{font-size:29px}.scouting-film{padding:25px;flex-direction:column;align-items:flex-start;gap:22px}.scouting-film .button{white-space:normal}.scouting-film h3{font-size:32px}.adult-help{grid-template-columns:1fr;padding:25px;gap:30px}.adult-help h2{font-size:37px}.adult-help>div>p:not(.eyebrow){font-size:14px}}
+
+.uniform-intro>p:last-child>a{display:inline-block;min-height:44px;padding:8px 0;max-width:100%}
