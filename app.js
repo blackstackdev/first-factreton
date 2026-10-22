@@ -139,8 +139,8 @@ function setupHomeSlideshow(){
  toggle.addEventListener('pointerdown',()=>{pointerPaused=paused;});
  toggle.addEventListener('click',event=>{paused=!(event.detail>0&&pointerPaused!==undefined?pointerPaused:paused);pointerPaused=undefined;request++;schedule();});
  carousel.addEventListener('focusin',pause);
- carousel.addEventListener('mouseenter',()=>{hovered=true;request++;schedule();});
- carousel.addEventListener('mouseleave',()=>{hovered=false;schedule();});
+ carousel.addEventListener('pointerenter',event=>{if(event.pointerType!=='mouse')return;hovered=true;request++;schedule();});
+ carousel.addEventListener('pointerleave',event=>{if(event.pointerType!=='mouse')return;hovered=false;schedule();});
  carousel.addEventListener('keydown',event=>{
   const target={ArrowLeft:current-1,ArrowRight:current+1,Home:0,End:slides.length-1}[event.key];
   if(target===undefined)return;event.preventDefault();show(target);
