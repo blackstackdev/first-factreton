@@ -28,7 +28,131 @@ const data={
 function nav(){return `<header class="site-header"><a href="index.html" class="brand" aria-label="First Factreton Scout Group home"><img src="assets/group-crest.png" alt="" width="66" height="66"><span><strong>First Factreton</strong><span>Scout Group</span></span></a><button class="menu-toggle" aria-expanded="false" aria-controls="site-nav">Menu <span aria-hidden="true">☰</span></button><nav id="site-nav" aria-label="Main navigation"><a href="index.html" ${page==='home'?'aria-current="page"':''}>Home</a><a href="cubs.html" ${page==='cubs'?'aria-current="page"':''}>Cubs</a><a href="scouts.html" ${page==='scouts'?'aria-current="page"':''}>Scouts</a><a href="adventures.html" ${page==='adventures'?'aria-current="page"':''}>Adventures</a><a href="gallery.html" ${page==='gallery'?'aria-current="page"':''}>Gallery</a><a href="uniform.html" ${page==='uniform'?'aria-current="page"':''}>Uniform</a><a href="learn.html" ${(page==='learn'||page==='earn')?'aria-current="page"':''}>Learn</a><a href="our-story.html" ${page==='story'?'aria-current="page"':''}>Our story</a><a href="contact.html" ${page==='contact'?'aria-current="page"':''}>Contact</a><a href="${scoutShopUrl}" target="_blank" rel="noopener noreferrer" aria-label="Scout shop (opens in a new tab)">Scout shop ↗</a><button class="button gold" data-visit="${data[page]?page:'unsure'}">Come and try ${arrow}</button></nav></header>`;}
 function visit(d){return `<section id="visit" class="visit-band content"><div><h2>${d?.visit||'Your next adventure<br>starts close to home.'}</h2><p>${icon('pin')} Sunderland Street Scout Hall, Factreton</p>${d?`<p class="visit-sub">${d.visitText}</p>`:''}<a class="map-link" href="${venueMapUrl}" target="_blank" rel="noopener noreferrer" aria-label="Open First Factreton Scout Group in Google Maps (opens in a new tab)">Open in Google Maps ${arrow}</a></div><button class="button gold" data-visit="${data[page]?page:'unsure'}">Plan a visit ${arrow}</button></section>`;}
 function footer(){return campfireStrip()+`<footer class="site-footer content"><div class="footer-main"><a class="brand compact" href="index.html"><img src="assets/group-crest.png" alt="" width="54" height="54"><span><strong>First Factreton</strong><span>Scout Group</span></span></a><nav aria-label="Footer navigation"><a href="index.html">Home</a><a href="cubs.html">Cubs</a><a href="scouts.html">Scouts</a><a href="adventures.html">Adventures</a><a href="gallery.html">Gallery</a><a href="uniform.html">Uniform</a><a href="our-story.html">Our story</a><a href="contact.html">Contact</a><a href="our-story.html#first-visit">First visit</a><a href="learn.html">Learning corner</a><a href="our-story.html#help-out">Help out</a><a href="${scoutShopUrl}" target="_blank" rel="noopener noreferrer" aria-label="Scout shop (opens in a new tab)">Scout shop ↗</a></nav><img class="ssa-logo" src="assets/ssa-promotional-badge.png" alt="SCOUTS South Africa promotional badge" width="1552" height="839" loading="lazy"></div><div class="preview-footer"><span>${(page==='learn'||page==='earn')?'First Factreton learning guides':page==='uniform'?'Illustrated uniform placement guides':'First Factreton group photographs'} · <a class="inline-link" href="privacy.html">Privacy &amp; enquiries</a></span><button class="text-button" id="design-notes">Design notes & research ${arrow}</button></div><p class="site-credit">Built by <strong>Krēˈādiv Worx</strong></p></footer>`;}
-function home(){return `<section class="home-hero frame"><figure class="home-photo"><img class="hero-photo" src="assets/gallery-11.jpg" alt="Cubs, Scouts and leaders gathered outdoors with the mountains behind them." width="1040" height="780" fetchpriority="high"><figcaption>Our group. Our adventures. A place to belong.</figcaption></figure><div class="home-copy"><h1>A little adventure.<br>A lifetime of<br>possibility.</h1><p>Friendship, outdoor skills and a place to belong. <br>Discover Cubs and Scouts in the heart of Factreton.</p><a class="button gold" href="#sections">Find your adventure ${arrow}</a></div></section><section id="sections" class="section-choice content"><h2>Find your place.</h2><div class="choice-grid">${['cubs','scouts'].map(k=>{const d=data[k];return `<article class="choice ${k}"><img src="assets/${d.cardPhoto}" alt="${d.cardAlt}" width="${d.cardWidth}" height="${d.cardHeight}" loading="lazy"><div class="choice-body"><div class="choice-heading"><h3>${d.name}</h3>${icon(k==='cubs'?'tree':'compass')}</div><p class="meeting"><b>Ages ${d.ages}</b><br>${d.day} ${d.time}</p><p>${k==='cubs'?'For curious minds and big imaginations. Build confidence, try new things and make new friends.':'For young people ready for bigger challenges. Develop practical skills, leadership and independence.'}</p><a class="button dark" href="${k}.html">Explore ${d.name} ${arrow}</a></div></article>`}).join('')}</div></section><section class="home-explore content"><div><h2>A little curiosity goes a long way.</h2><p>Explore activity ideas, try our compass challenge and find your first adventure.</p></div><a class="button dark" href="adventures.html">Explore Adventures ${arrow}</a></section>${visit()}`;}
+const homePhotos = [
+ {
+  "src": "assets/gallery-11.jpg",
+  "width": 1040,
+  "height": 780,
+  "caption": "Together beyond the hall",
+  "alt": "Cubs, Scouts and leaders together on a grassy field."
+ },
+ {
+  "src": "assets/gallery-09.jpg",
+  "width": 1024,
+  "height": 768,
+  "caption": "Learning something new",
+  "alt": "A small group sharing an outdoor nature activity."
+ },
+ {
+  "src": "assets/gallery-30.jpg",
+  "width": 1024,
+  "height": 462,
+  "caption": "Ready, together",
+  "alt": "Scouts in khaki uniform standing together at the hall."
+ },
+ {
+  "src": "assets/gallery-37.jpg",
+  "width": 462,
+  "height": 1024,
+  "caption": "Learning by doing",
+  "alt": "Two Scouts practising a lashing on wooden staves."
+ },
+ {
+  "src": "assets/gallery-35.jpg",
+  "width": 1024,
+  "height": 462,
+  "caption": "A story to share",
+  "alt": "Cubs sitting together while a leader reads to the group."
+ },
+ {
+  "src": "assets/gallery-01.jpg",
+  "width": 1024,
+  "height": 768,
+  "caption": "Out exploring together",
+  "alt": "Cubs and leaders gathered outside during a group outing."
+ },
+ {
+  "src": "assets/gallery-21.jpg",
+  "width": 1024,
+  "height": 472,
+  "caption": "Skills put to work",
+  "alt": "Scouts working together to lash wooden spars on the grass."
+ },
+ {
+  "src": "assets/gallery-26.jpg",
+  "width": 1024,
+  "height": 472,
+  "caption": "Meet the crew",
+  "alt": "The raft crew standing together in orange lifejackets."
+ },
+ {
+  "src": "assets/gallery-10.jpg",
+  "width": 768,
+  "height": 1024,
+  "caption": "Look what we made",
+  "alt": "A Cub holding up a planted bottle to share with the group."
+ },
+ {
+  "src": "assets/gallery-39.jpg",
+  "width": 462,
+  "height": 1024,
+  "caption": "Proud of the build",
+  "alt": "A Scout holding a small frame made from lashed staves."
+ }
+];
+function homeSlideshow(){return `<figure class="home-photo home-slideshow" role="region" aria-roledescription="carousel" aria-label="First Factreton in pictures" tabindex="0"><div class="home-slide-stage" id="home-slides" aria-live="off">${homePhotos.map((photo,index)=>`<div class="home-slide" role="group" aria-roledescription="slide" aria-label="${index+1} of ${homePhotos.length}" ${index?'hidden':''}><img class="hero-photo" src="${photo.src}" alt="${photo.alt}" width="${photo.width}" height="${photo.height}" ${index?'loading="lazy"':'fetchpriority="high"'} decoding="async"></div>`).join('')}</div><div class="home-slide-controls"><button class="home-slide-toggle" type="button" aria-controls="home-slides" aria-label="Play slideshow"><span aria-hidden="true">▶</span> Play</button><span class="home-slide-counter" aria-hidden="true">1 / ${homePhotos.length}</span><div class="home-slide-arrows"><button type="button" class="home-slide-previous" aria-label="Previous photo" aria-controls="home-slides">←</button><button type="button" class="home-slide-next" aria-label="Next photo" aria-controls="home-slides">→</button></div></div><figcaption id="home-photo-caption">${homePhotos[0].caption}</figcaption><div class="home-slide-dots" role="group" aria-label="Choose a slideshow photo">${homePhotos.map((photo,index)=>`<button type="button" data-home-slide="${index}" aria-label="Show photo ${index+1} of ${homePhotos.length}: ${photo.caption}" ${index?'':'aria-current="true"'}><span></span></button>`).join('')}</div><p class="sr-only" id="home-slide-status" role="status" aria-live="polite"></p></figure>`;}
+
+function setupHomeSlideshow(){
+ const carousel=document.querySelector('.home-slideshow');if(!carousel)return;
+ const slides=[...carousel.querySelectorAll('.home-slide')],dots=[...carousel.querySelectorAll('[data-home-slide]')];
+ const toggle=carousel.querySelector('.home-slide-toggle'),counter=carousel.querySelector('.home-slide-counter'),caption=carousel.querySelector('figcaption'),status=carousel.querySelector('#home-slide-status');
+ const motion=window.matchMedia('(prefers-reduced-motion: reduce)');
+ let current=0,timer=null,paused=motion.matches,hovered=false,request=0;
+ const preload=index=>{slides[index].querySelector('img').loading='eager';};
+ function schedule(){
+  clearTimeout(timer);timer=null;
+  toggle.setAttribute('aria-label',paused?'Play slideshow':'Pause slideshow');
+  toggle.innerHTML=paused?'<span aria-hidden="true">▶</span> Play':'<span aria-hidden="true">Ⅱ</span> Pause';
+  if(!paused&&!hovered&&!document.hidden&&!document.querySelector('dialog[open]'))timer=setTimeout(()=>show(current+1,false),6500);
+ }
+ function pause(){paused=true;request++;schedule();}
+ async function show(index,manual=true){
+  if(manual)pause();
+  clearTimeout(timer);timer=null;
+  const next=(index+slides.length)%slides.length,serial=++request,img=slides[next].querySelector('img');
+  preload(next);
+  try{await img.decode();}catch{
+   if(serial!==request)return;
+   paused=true;status.textContent='That photo could not load. Please try another photo.';schedule();return;
+  }
+  if(serial!==request)return;
+  slides[current].hidden=true;slides[next].hidden=false;current=next;
+  dots.forEach((dot,i)=>{if(i===current)dot.setAttribute('aria-current','true');else dot.removeAttribute('aria-current');});
+  counter.textContent=`${current+1} / ${slides.length}`;caption.textContent=homePhotos[current].caption;
+  if(manual)status.textContent=`Photo ${current+1} of ${slides.length}: ${homePhotos[current].caption}`;
+  preload((current+1)%slides.length);schedule();
+ }
+ carousel.querySelector('.home-slide-previous').addEventListener('click',()=>show(current-1));
+ carousel.querySelector('.home-slide-next').addEventListener('click',()=>show(current+1));
+ dots.forEach((dot,index)=>dot.addEventListener('click',()=>show(index)));
+ let pointerPaused;
+ toggle.addEventListener('pointerdown',()=>{pointerPaused=paused;});
+ toggle.addEventListener('click',event=>{paused=!(event.detail>0&&pointerPaused!==undefined?pointerPaused:paused);pointerPaused=undefined;request++;schedule();});
+ carousel.addEventListener('focusin',pause);
+ carousel.addEventListener('mouseenter',()=>{hovered=true;request++;schedule();});
+ carousel.addEventListener('mouseleave',()=>{hovered=false;schedule();});
+ carousel.addEventListener('keydown',event=>{
+  const target={ArrowLeft:current-1,ArrowRight:current+1,Home:0,End:slides.length-1}[event.key];
+  if(target===undefined)return;event.preventDefault();show(target);
+ });
+ document.addEventListener('visibilitychange',()=>{request++;schedule();});
+ document.querySelectorAll('dialog').forEach(dialog=>dialog.addEventListener('close',schedule));
+ document.addEventListener('click',()=>{if(document.querySelector('dialog[open]')){request++;clearTimeout(timer);timer=null;}});
+ motion.addEventListener('change',()=>{if(motion.matches)pause();});
+ preload(1);schedule();
+}
+
+function home(){return `<section class="home-hero frame">${homeSlideshow()}<div class="home-copy"><h1>A little adventure.<br>A lifetime of<br>possibility.</h1><p>Friendship, outdoor skills and a place to belong. <br>Discover Cubs and Scouts in the heart of Factreton.</p><a class="button gold" href="#sections">Find your adventure ${arrow}</a></div></section><section id="sections" class="section-choice content"><h2>Find your place.</h2><div class="choice-grid">${['cubs','scouts'].map(k=>{const d=data[k];return `<article class="choice ${k}"><img src="assets/${d.cardPhoto}" alt="${d.cardAlt}" width="${d.cardWidth}" height="${d.cardHeight}" loading="lazy"><div class="choice-body"><div class="choice-heading"><h3>${d.name}</h3>${icon(k==='cubs'?'tree':'compass')}</div><p class="meeting"><b>Ages ${d.ages}</b><br>${d.day} ${d.time}</p><p>${k==='cubs'?'For curious minds and big imaginations. Build confidence, try new things and make new friends.':'For young people ready for bigger challenges. Develop practical skills, leadership and independence.'}</p><a class="button dark" href="${k}.html">Explore ${d.name} ${arrow}</a></div></article>`}).join('')}</div></section><section class="home-explore content"><div><h2>A little curiosity goes a long way.</h2><p>Explore activity ideas, try our compass challenge and find your first adventure.</p></div><a class="button dark" href="adventures.html">Explore Adventures ${arrow}</a></section>${visit()}`;}
 function section(d){return `<section class="section-hero frame ${page}"><div class="split-copy"><h1>${d.headline}</h1><p class="section-age">${d.name} · Ages ${d.ages}</p><p class="intro">${d.intro}</p><button class="button gold" data-visit="${page}">${d.cta} ${arrow}</button></div><img class="split-photo" src="assets/${d.photo}" alt="${d.alt}" width="${d.width}" height="${d.height}" fetchpriority="high"><div class="schedule" aria-label="${d.name} meeting details"><span>${icon('calendar')}<b>${d.day}</b></span><span>${icon('clock')}${d.time}</span><span>${icon('pin')}<a href="${venueMapUrl}" target="_blank" rel="noopener noreferrer" aria-label="Sunderland Street Scout Hall on Google Maps (opens in a new tab)">Sunderland Street Scout Hall</a></span></div></section><section class="learning content"><h2>${d.learning}</h2><div class="learning-grid">${d.features.map(([title,copy],i)=>`<article><div class="feature-title"><span class="number">${i+1}</span><h3>${title}</h3></div><p>${copy}</p></article>`).join('')}</div></section><section class="evening content ${page}"><h2>${d.evening}</h2><div class="steps ${d.steps.length===4?'four':''}">${d.steps.map(([symbol,title,copy])=>`<article><div class="step-symbol">${icon(symbol)}</div><h3>${title}</h3><p>${copy}</p></article>`).join('')}</div><p class="programme-note">An example of the programme rhythm. Activities vary from week to week.</p></section><section class="faq content"><div><h2>Your first ${d.name==='Cubs'?'Cub':'Scout'} evening</h2><p>A few answers before<br>your first adventure.</p></div><div class="questions">${d.faqs.map(([q,a])=>`<details><summary>${q}<span aria-hidden="true">+</span></summary><p>${a}</p></details>`).join('')}</div></section><p class="uniform-crosslink content"><a class="inline-link" href="uniform.html#${page}">See the ${d.name} uniform &amp; badge guide ${arrow}</a></p>${visit(d)}`;}
 function contact(){return `<section class="contact-intro content"><h1>Let’s talk Scouting.</h1><p>Ask about joining, arrange a first visit or find out more about First Factreton Scout Group.</p></section><div class="contact-grid content"><section class="contact-leader" aria-labelledby="leader-name"><p class="contact-role">${groupContact.role}</p><h2 id="leader-name">${groupContact.name}</h2><p>Call Donovan with your questions about the group or to arrange a visit.</p><a class="contact-phone" href="${groupContact.call}" aria-label="Call Donovan Storkey on ${groupContact.phone}">${groupContact.phone}</a><p class="contact-hint">Tap the number to call.</p><a class="contact-email inline-link" href="mailto:${groupContact.email}">${groupContact.email}</a><button class="button gold contact-enquire" data-visit="unsure">${enquiryCanSend?'Send us an enquiry':'Contact the group'} ${arrow}</button><a class="inline-link contact-first-visit" href="our-story.html#first-visit">Your first evening, made simple</a></section><section class="contact-details" id="visit" aria-labelledby="contact-meetings"><h2 id="contact-meetings">Come and meet us.</h2><dl class="contact-meetings"><div><dt>Cubs</dt><dd>${data.cubs.day}<br>${data.cubs.time}</dd></div><div><dt>Scouts</dt><dd>${data.scouts.day}<br>${data.scouts.time}</dd></div></dl><p><strong>Sunderland Street Scout Hall</strong><br>Next to the community centre, Factreton.</p><a class="map-link" href="${venueMapUrl}" target="_blank" rel="noopener noreferrer" aria-label="Open First Factreton Scout Group in Google Maps (opens in a new tab)">Open in Google Maps ${arrow}</a></section></div><section class="contact-shop content" aria-labelledby="contact-shop-title"><div><h2 id="contact-shop-title">Ready to kit up?</h2><p>Browse uniforms, badges and Scout essentials at the official SCOUTS South Africa shop. Check what you need with the group before buying a uniform.</p></div><a class="button dark" href="${scoutShopUrl}" target="_blank" rel="noopener noreferrer" aria-label="Visit the official Scout shop (opens in a new tab)">Visit Scout shop ${arrow}</a></section>`;}
 function dialogs(){return `<dialog id="visit-dialog" aria-labelledby="visit-title"><button class="close-dialog" aria-label="Close visit enquiry">×</button><div class="dialog-intro"><h2 id="visit-title">Let’s plan a first visit.</h2><p>Come and meet the group at Sunderland Street Scout Hall, next to the community centre in Factreton.</p><p>For a direct enquiry, email <a class="inline-link" href="mailto:${groupContact.email}">${groupContact.email}</a> or call <a class="inline-link" href="${groupContact.call}">${groupContact.phone}</a>.</p></div>${enquiryCanSend?`<p class="local-notice">Your enquiry goes through FormSubmit to the group inbox. Please use an adult’s contact details and leave out children’s names or private information. <a href="privacy.html">Privacy &amp; enquiries</a></p><form id="visit-form" action="https://formsubmit.co/${groupContact.email}" method="POST"><input type="hidden" name="_subject" value="First Factreton website enquiry"><input type="hidden" name="_next" value="https://blackstackdev.github.io/first-factreton/thanks.html"><input type="hidden" name="_template" value="table"><div class="contact-trap" aria-hidden="true"><label>Leave this field blank<input type="text" name="_honey" tabindex="-1" autocomplete="off"></label></div><fieldset id="enquiry-fields"><legend class="sr-only">Your enquiry details</legend><div class="field-row"><label>Your name (adult contact)<input name="name" autocomplete="name" maxlength="80" required></label><label>Your reply email<input name="email" type="email" autocomplete="email" maxlength="160" required></label></div><label>I’m interested in<select name="section" id="visit-section"><option value="unsure">Help me choose</option><option value="cubs">Cubs · ages 7–10</option><option value="scouts">Scouts · ages 11–17</option></select></label><p class="selected-meeting" id="selected-meeting" aria-live="polite"></p><label>Anything you’d like to ask? <span>(optional)</span><textarea name="message" maxlength="600" rows="3" placeholder="Please leave out children’s names, medical information and private records."></textarea></label></fieldset><section id="enquiry-review" hidden aria-labelledby="enquiry-review-title"><h3 id="enquiry-review-title">Review your enquiry</h3><p id="enquiry-review-body"></p><label class="consent-label"><input type="checkbox" name="permission_to_respond" value="Yes" required disabled><span>I agree to send these details through FormSubmit to First Factreton so the group can respond to my enquiry.</span></label><p class="local-notice">Next you may be asked to complete FormSubmit’s anti-spam check. Sending an enquiry does not book a visit. Nothing is saved by this website.</p><button class="text-link" id="edit-enquiry" type="button">Edit details</button></section><p id="enquiry-error" role="status"></p><button class="button dark" id="enquiry-submit" type="submit">Review enquiry ${arrow}</button></form>`:`<p class="local-notice">Please email or call the group to arrange a visit. A leader will help you choose the right evening and explain what to bring.</p>`}</dialog><dialog id="notes-dialog" aria-labelledby="notes-title"><button class="close-dialog" aria-label="Close design notes">×</button><h2 id="notes-title">The thinking behind<br>these pages.</h2><p>A public introduction to First Factreton: Cubs, Scouts, our uniform, activity ideas, a compass practice game, our learning guides and a first-visit guide.</p><h3>Confirmed group details</h3><p>Cubs: Mondays 18:00–19:30. Scouts: Wednesdays 18:00–20:00. Sunderland Street Scout Hall. Public contact: Donovan Storkey, Scout Group Leader, ${groupContact.phone}; ${groupContact.email}.</p><h3>What the activity pages show</h3><p>Illustrative activity ideas, not reports of past group events. Special events and historical dates will be added when confirmed. The compass challenge is practice, not a badge assessment; its score is not saved.</p><h3>Sources</h3><ul><li><a href="https://scoutwiki.scouts.org.za/wiki/SCOUTS_SA_Marketing_Toolkit" target="_blank" rel="noopener noreferrer">SCOUTS SA Marketing Toolkit</a> — promotional badge, learning resources and campaign film.</li><li><a href="https://www.scouts.org.za/overview/" target="_blank" rel="noopener noreferrer">SCOUTS South Africa</a> — age groups and programme overview.</li><li><a href="https://scoutwiki.scouts.org.za/wiki/Compass_basics" target="_blank" rel="noopener noreferrer">SCOUTS South Africa Wiki</a> — compass directions and uniform placement charts.</li><li><a href="https://firstpinelands.org/" target="_blank" rel="noopener noreferrer">1st Pinelands</a> and <a href="https://www.1stcampsbay.co.za/" target="_blank" rel="noopener noreferrer">1st Camps Bay</a> — references for section navigation and group presentation.</li></ul><p>The Home, Cubs, Scouts, Adventures and Gallery pages use group photographs supplied for this website. The Uniform page retains illustrated badge-placement guides. Private membership, attendance and advancement records are not published. This website is separate from the private Troopstead app.</p><p><a href="privacy.html">Privacy &amp; enquiries</a></p></dialog>`;}
@@ -89,6 +213,6 @@ siteNav.querySelectorAll('a,button').forEach(item=>item.addEventListener('click'
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){toggle.setAttribute('aria-expanded','false');siteNav.classList.remove('is-open');}});
 function updateMeeting(){const select=document.querySelector('#visit-section');if(!select)return;const d=data[select.value];document.querySelector('#selected-meeting').textContent=d?`${d.name} · ${d.day} · ${d.time}`:'Cubs: Mondays 18:00–19:30 · Scouts: Wednesdays 18:00–20:00';}
 document.querySelector('#visit-section')?.addEventListener('change',updateMeeting);
-setupUniformTabs();setupAdventureFeatures();setupEnquiry();setupLearning();
+setupUniformTabs();setupAdventureFeatures();setupEnquiry();setupLearning();setupHomeSlideshow();
 if(page==='gallery')setupGallery();
 if(page==='contact'&&location.hash==='#enquire'){const selected=new URLSearchParams(location.search).get('section');const select=document.querySelector('#visit-section');if(select&&['cubs','scouts'].includes(selected))select.value=selected;updateMeeting();openDialog(visitDialog);}
