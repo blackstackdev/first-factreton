@@ -1,6 +1,11 @@
 (() => {
  'use strict';
  if(document.querySelector('#woggles-launcher'))return;
+ // Rig the approved image in the browser; retain its original pixels and file.
+ function avatar(id){
+  const hand='M0 0H345V345L326 397L278 447L247 455L231 483L171 446L70 409Z';
+  return `<svg class="woggles-avatar" viewBox="0 0 1536 1024" width="78" height="52" aria-hidden="true" focusable="false"><defs><image id="${id}-image" href="assets/woggles.webp" width="1536" height="1024"/><linearGradient id="${id}-skin" gradientUnits="userSpaceOnUse" x1="580" y1="340" x2="912" y2="470"><stop stop-color="#9B663B"/><stop offset="1" stop-color="#996439"/></linearGradient><filter id="${id}-soft"><feGaussianBlur stdDeviation="5"/></filter><mask id="${id}-base" maskUnits="userSpaceOnUse" x="0" y="0" width="1536" height="1024"><rect width="1536" height="1024" fill="white"/><path d="${hand}" fill="black" stroke="white" stroke-width="3"/><ellipse cx="631" cy="404" rx="50" ry="69" fill="black" filter="url(#${id}-soft)"/><ellipse cx="866" cy="403" rx="51" ry="69" fill="black" filter="url(#${id}-soft)"/></mask><clipPath id="${id}-hand"><path d="${hand}"/></clipPath><clipPath id="${id}-left"><ellipse cx="631" cy="404" rx="55" ry="74"/></clipPath><clipPath id="${id}-right"><ellipse cx="866" cy="403" rx="56" ry="74"/></clipPath></defs><g class="woggles-body"><ellipse cx="221" cy="461" rx="25" ry="22" fill="#9B683D"/><g fill="url(#${id}-skin)"><ellipse cx="631" cy="404" rx="58" ry="77"/><ellipse cx="866" cy="403" rx="59" ry="77"/></g><use href="#${id}-image" mask="url(#${id}-base)"/><g class="woggles-wave"><use href="#${id}-image" clip-path="url(#${id}-hand)"/></g><g class="woggles-eye woggles-eye-left"><use href="#${id}-image" clip-path="url(#${id}-left)"/></g><g class="woggles-eye woggles-eye-right"><use href="#${id}-image" clip-path="url(#${id}-right)"/></g></g></svg>`;
+ }
  const publicContact=['Contact a leader','contact.html'];
  const topics={
   meetings:{title:'Meeting times',text:'Cubs usually meet on Mondays, 18:00–19:30. Scouts usually meet on Wednesdays, 18:00–20:00, at Sunderland Street Scout Hall. Check with a leader for school breaks, closures or changes before travelling.',links:[['Cubs evenings','cubs.html'],['Scouts evenings','scouts.html'],publicContact]},
@@ -45,10 +50,17 @@
   return topics.unknown;
  }
  const launcher=document.createElement('button');launcher.id='woggles-launcher';launcher.className='woggles-launcher';launcher.type='button';launcher.setAttribute('aria-haspopup','dialog');launcher.setAttribute('aria-controls','woggles-dialog');launcher.setAttribute('aria-expanded','false');launcher.setAttribute('aria-label','Ask Woggles, our website guide');
- launcher.innerHTML='<img src="assets/woggles.webp" alt="" width="68" height="46"><span>Ask Woggles</span>';
+ launcher.innerHTML=avatar('woggles-button')+'<span>Ask Woggles</span>';
  const dialog=document.createElement('dialog');dialog.id='woggles-dialog';dialog.className='woggles-dialog';dialog.setAttribute('aria-labelledby','woggles-title');
  dialog.innerHTML='<header class="woggles-head"><img src="assets/woggles.webp" alt="" width="78" height="52"><div><h2 id="woggles-title" tabindex="-1">Hi, I’m Woggles.</h2><p>Your First Factreton website guide</p></div><button type="button" class="woggles-close" aria-label="Close Woggles">×</button></header><p class="woggles-disclosure">Reviewed public answers · Not a live leader</p><div class="woggles-log" role="log" aria-live="polite" aria-label="Conversation with Woggles"></div><div class="woggles-topics" aria-label="Suggested topics"></div><form class="woggles-form"><label for="woggles-question">What would you like to know?</label><div><input id="woggles-question" name="question" type="text" maxlength="300" placeholder="Try meeting times or First Aid badge" autocomplete="off"><button type="submit" aria-label="Ask Woggles">Ask</button></div></form><footer class="woggles-foot"><button type="button" class="woggles-clear">Clear chat</button><span>Chat text isn’t saved or sent.</span><a href="privacy.html">Privacy</a></footer>';
+ const headerImage=dialog.querySelector('.woggles-head>img');headerImage.outerHTML=avatar('woggles-chat');
  document.body.append(launcher,dialog);
+ const portrait=dialog.querySelector('.woggles-avatar'),motion=window.matchMedia('(prefers-reduced-motion: reduce)');
+ function greet(){portrait.classList.remove('is-greeting');if(motion.matches||document.hidden)return;requestAnimationFrame(()=>{if(dialog.open&&!motion.matches&&!document.hidden)portrait.classList.add('is-greeting');});}
+ portrait.addEventListener('animationend',e=>{if(e.animationName==='woggles-wave')portrait.classList.remove('is-greeting');});
+ motion.addEventListener('change',()=>{if(motion.matches)portrait.classList.remove('is-greeting');});
+ function pauseMotion(){document.body.classList.toggle('woggles-motion-paused',document.hidden);if(document.hidden)portrait.classList.remove('is-greeting');}
+ document.addEventListener('visibilitychange',pauseMotion);pauseMotion();
  const log=dialog.querySelector('.woggles-log'),input=dialog.querySelector('input'),quick=dialog.querySelector('.woggles-topics');let previousFocus;
  const node=(tag,cls,text)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(text)el.textContent=text;return el;};
  function message(text,from='Woggles',links=[]){
@@ -59,10 +71,10 @@
  function welcome(){log.replaceChildren();message('I can help you find meeting times, joining information, uniform advice, directions and badge guides. Choose a topic or type a question. For personal records or confirmed group arrangements, please ask a leader.');input.value='';}
  function ask(text,key){const clean=text.trim().slice(0,300);if(!clean)return;message(clean,'You');const reply=key?topics[key]:answer(clean);message(reply.text,'Woggles',reply.links);input.value='';}
  for(const key of['meetings','joining','uniform','badges','fees','contact']){const b=node('button','',topics[key].title);b.type='button';b.addEventListener('click',()=>ask(topics[key].title,key));quick.append(b);}
- launcher.addEventListener('click',()=>{previousFocus=document.activeElement;dialog.showModal();document.body.classList.add('modal-open');launcher.setAttribute('aria-expanded','true');dialog.querySelector('h2').focus();});
+ launcher.addEventListener('click',()=>{previousFocus=document.activeElement;dialog.showModal();document.body.classList.add('modal-open');launcher.setAttribute('aria-expanded','true');dialog.querySelector('h2').focus();greet();});
  dialog.querySelector('.woggles-close').addEventListener('click',()=>dialog.close());
  dialog.addEventListener('click',e=>{if(e.target!==dialog)return;const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dialog.close();});
- dialog.addEventListener('close',()=>{launcher.setAttribute('aria-expanded','false');if(!document.querySelector('dialog[open]'))document.body.classList.remove('modal-open');previousFocus?.focus();});
+ dialog.addEventListener('close',()=>{portrait.classList.remove('is-greeting');launcher.setAttribute('aria-expanded','false');if(!document.querySelector('dialog[open]'))document.body.classList.remove('modal-open');previousFocus?.focus();});
  dialog.querySelector('form').addEventListener('submit',e=>{e.preventDefault();ask(input.value);});
  dialog.querySelector('.woggles-clear').addEventListener('click',()=>{welcome();input.focus();});
  window.addEventListener('pagehide',()=>{welcome();if(dialog.open)dialog.close();});
