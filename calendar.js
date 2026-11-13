@@ -20,7 +20,7 @@
  const ui={scope:root.querySelector('#scope-filter'),section:root.querySelector('#section-filter'),month:root.querySelector('#month-filter'),search:root.querySelector('#calendar-search'),grid:root.querySelector('#calendar-grid'),entries:root.querySelector('#calendar-entries'),count:root.querySelector('#calendar-count'),agenda:root.querySelector('#agenda-heading'),showMonth:root.querySelector('#show-month'),heading:root.querySelector('#month-heading'),prev:root.querySelector('#previous-month'),next:root.querySelector('#next-month')};
  const moreIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>';
  ui.month.innerHTML=(planner?'<option value="all">Whole year</option>':'')+monthNames.map((m,i)=>`<option value="${i}">${m} ${year}</option>`).join('');
- ui.scope.value=state.scope;ui.section.value=state.section;ui.month.value=state.month;ui.search.value=state.q;
+ ui.section.value=state.section;ui.month.value=state.month;ui.search.value=state.q;
  function fits(e){return(state.scope==='All'||e.scope===state.scope)&&(state.section==='All'||e.section===state.section||e.section==='All')&&(!state.q||[e.title,e.summary,e.scope,e.section,e.kind,e.description].join(' ').toLocaleLowerCase().includes(state.q.toLocaleLowerCase().trim()));}
  function inMonth(e,m){const start=monthKey(m)+'-01',end=monthKey(m)+'-'+new Date(Date.UTC(year,m+1,0)).getUTCDate();return e.start<=end&&e.end>=start;}
  function route(mode,e){const p=new URLSearchParams();p.set('month',e?e.start.slice(0,7):state.month==='all'?'all':monthKey(state.month));if(state.scope!=='All')p.set('scope',state.scope);if(state.section!=='All')p.set('section',state.section);if(state.q)p.set('q',state.q);if(e)p.set('event',e.id);return mode+'.html?'+p.toString();}
@@ -33,22 +33,27 @@
  }
  function row(e){const date=parseDate(e.start),end=e.start!==e.end?`<span class="entry-end">to ${parseDate(e.end).getUTCDate()} ${shortMonth.format(parseDate(e.end))}</span>`:'';return`<article class="calendar-event" data-entry-id="${escape(e.id)}"><div class="calendar-date-block"><strong>${date.getUTCDate()}</strong><span>${shortMonth.format(date)}</span>${end}</div><div class="calendar-event-copy"><p class="calendar-event-context"><span class="calendar-scope scope-${e.scope.toLowerCase()}">${escape(e.scope)}</span> ${escape(e.section)} · ${escape(e.kind)}</p><h3><button type="button" data-full-entry="${escape(e.id)}">${escape(e.title)}</button></h3><p>${escape(e.summary)}</p><p class="calendar-event-time">${escape(e.time?(e.time+'–'+e.endTime+' SAST'):'Time to be confirmed')} <span class="calendar-status status-${e.status.toLowerCase()}">${escape(e.status)}</span></p></div><details class="calendar-more"><summary aria-label="More options for ${escape(e.title)}">${moreIcon}<span>More</span></summary><div class="calendar-more-menu"><button type="button" data-full-entry="${escape(e.id)}">View full entry</button><a href="${escape(route(planner?'calendar':'planner',e))}">${planner?'Show on calendar':'View in group planner'}</a></div></details></article>`;}
  function render(){
+  root.classList.toggle('group-private',state.scope==='Group');
+  ui.scope.querySelectorAll('[data-scope]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.scope===state.scope)));
   const matches=data.events.filter(fits),visible=matches.filter(e=>state.month==='all'||inMonth(e,state.month));
   if(!planner)renderGrid(visible);
   const entries=state.day?visible.filter(e=>e.start<=state.day&&state.day<=e.end):visible;
   ui.count.textContent=visible.length+' '+(visible.length===1?'entry':'entries')+(state.month==='all'?' in '+year:' in '+monthNames[state.month])+(state.scope==='All'?'':' · '+state.scope);
-  ui.agenda.textContent=state.day?dayText(state.day):planner?'The group plan':monthNames[state.month]+' entries';ui.showMonth.hidden=!state.day;
+  if(state.scope==='Group')ui.count.textContent='Group entries are not public';
+  ui.agenda.textContent=state.scope==='Group'?'Members-only group planning':state.day?dayText(state.day):planner?'Public events':monthNames[state.month]+' entries';ui.showMonth.hidden=!state.day;
   if(entries.length){
    if(planner&&state.month==='all'){const groups=new Map();for(const e of entries){const k=e.start.slice(0,7);if(!groups.has(k))groups.set(k,[]);groups.get(k).push(e);}ui.entries.innerHTML=[...groups].map(([k,items])=>`<section class="planner-month" aria-labelledby="planner-${k}"><h3 class="planner-month-title" id="planner-${k}">${monthNames[Number(k.slice(-2))-1]} ${year}<span>${items.length} ${items.length===1?'entry':'entries'}</span></h3>${items.map(row).join('')}</section>`).join('');}
    else ui.entries.innerHTML=entries.map(row).join('');
-  }else{ui.entries.innerHTML=`<div class="calendar-empty"><h3>${state.scope==='District'?'District dates are still to come.':'No matching entries.'}</h3><p>${state.scope==='District'?'No district dates have been published in this group plan yet.':'Try another month, section or search term.'}</p><button type="button" class="calendar-reset" data-reset>Reset filters</button></div>`;}
+  }else if(state.scope==='Group'){ui.entries.innerHTML='<div class="calendar-empty calendar-private"><h3>Group plans are private.</h3><p>Our meeting schedule and activity plans are not included in this public calendar or its data files. Members-only access is not connected to this website yet. Please ask a leader for the group plan.</p><a class="inline-link" href="contact.html">Contact the group</a><button type="button" class="calendar-reset" data-reset>Show public events</button></div>';}
+  else{ui.entries.innerHTML=`<div class="calendar-empty"><h3>${state.scope==='District'?'District dates are still to come.':'No matching entries.'}</h3><p>${state.scope==='District'?'No district dates have been published in this public calendar yet.':'Try another month, section or search term.'}</p><button type="button" class="calendar-reset" data-reset>Reset filters</button></div>`;}
   document.querySelectorAll('.calendar-tabs a').forEach(a=>{a.href=route(a.textContent.trim()==='Calendar'?'calendar':'planner');});
   syncUrl();
  }
- function reset(){state.scope='All';state.section='All';state.q='';state.day=null;ui.scope.value='All';ui.section.value='All';ui.search.value='';render();}
- function filter(){state.scope=ui.scope.value;state.section=ui.section.value;state.month=ui.month.value==='all'?'all':Number(ui.month.value);state.q=ui.search.value.trim();state.day=null;render();}
+ function reset(){state.scope='All';state.section='All';state.q='';state.day=null;ui.section.value='All';ui.search.value='';render();}
+ function filter(){state.section=ui.section.value;state.month=ui.month.value==='all'?'all':Number(ui.month.value);state.q=ui.search.value.trim();state.day=null;render();}
  root.querySelector('form').addEventListener('submit',e=>e.preventDefault());
- for(const el of[ui.scope,ui.section,ui.month])el.addEventListener('change',filter);
+ ui.scope.addEventListener('click',e=>{const button=e.target.closest('[data-scope]');if(!button)return;state.scope=button.dataset.scope;state.day=null;render();});
+ for(const el of[ui.section,ui.month])el.addEventListener('change',filter);
  ui.search.addEventListener('input',filter);root.querySelector('#calendar-reset').addEventListener('click',reset);ui.showMonth.addEventListener('click',()=>{state.day=null;render();});
  ui.prev.addEventListener('click',()=>{if(state.month>0){state.month--;state.day=null;ui.month.value=state.month;render();}});
  ui.next.addEventListener('click',()=>{if(state.month<11){state.month++;state.day=null;ui.month.value=state.month;render();}});
