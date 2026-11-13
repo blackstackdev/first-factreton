@@ -1,8 +1,22 @@
 'use strict';
 
-const galleryCategories = {all:'All photos',cubs:'Cub adventures',hall:'At the hall',raft:'Raft building',outdoors:'Out & about'};
+const galleryCategories = {all:'All photos',cubs:'Cub adventures',hall:'At the hall',raft:'Raft building',kontiki:'Kontiki 2026',outdoors:'Out & about'};
 // Curated public descriptions only. Email provenance stays in the private archive.
+const kontikiPhotoSizes = {"21":[1024,472],"23":[1024,472],"25":[1024,472],"42":[1024,472],"43":[1024,472],"44":[1024,472],"45":[1152,532],"46":[1024,472],"47":[1024,472],"48":[1024,472],"49":[1024,472],"50":[1024,472],"51":[1024,472],"52":[1024,472],"53":[1024,472]};
 const galleryPhotos = [
+ [51, "raft", "Meet the Kontiki crew", "Six crew members gathered on their raft beside its cabin."],
+ [52, "raft", "Paddles up", "The raft crew wearing lifejackets and holding their paddles."],
+ [50, "raft", "Big ideas start small", "A miniature raft model with barrels, a cabin and paddles."],
+ [42, "raft", "Securing the raft frame", "Team members working beneath and beside the raft frame during the build."],
+ [43, "raft", "Building into the evening", "The raft team working around the wooden frame after dark."],
+ [44, "raft", "Together by the water", "Scouts and supporters gathered along the waterside at Kontiki."],
+ [45, "raft", "A waterfront full of adventure", "A view across the water towards several numbered Kontiki rafts."],
+ [46, "raft", "Rafts at the ready", "Several completed rafts moored beside the grassy bank."],
+ [47, "raft", "Waiting by the launch", "Team members gathered beneath a shelter beside the waterside."],
+ [48, "raft", "On-water support", "A yellow rescue boat near the rafts on the water."],
+ [49, "raft", "Along the raft line", "A rescue boat alongside a line of numbered rafts."],
+ [53, "raft", "Part of the Kontiki crowd", "Scouts and supporters gathered together on the grass at Kontiki."],
+
  [1,'outdoors','Out exploring together','Cubs and leaders gathered outside during a group outing.'],
  [2,'hall','Together in uniform','A group standing together in khaki uniform at the hall.'],
  [3,'hall','An evening at the hall','Scouts and leaders gathered in the hall.'],
@@ -44,7 +58,8 @@ const galleryPhotos = [
  [39,'hall','Proud of the build','A Scout holding a small frame made from lashed staves.'],
  [40,'outdoors','Exploring somewhere new','A group with backpacks gathered outside during an outing.'],
  [41,'outdoors','The next adventure awaits','A group walking along a marked path through coastal surroundings.']
-].map(([number,category,title,alt])=>({number,category,title,alt,src:`assets/gallery-${String(number).padStart(2,'0')}.jpg`}));
+].map(([number,category,title,alt])=>{const size=kontikiPhotoSizes[number]||[1024,768];return{number,category,title,alt,event:kontikiPhotoSizes[number]?'kontiki':null,width:size[0],height:size[1],src:`assets/gallery-${String(number).padStart(2,'0')}.jpg`};});
+const photoCollection=photo=>galleryCategories[photo.event||photo.category];
 
 function gallery(){return `<section class="gallery-intro content"><div><p class="eyebrow">First Factreton in pictures</p><h1>Little moments.<br>Big adventures.</h1><p>From curious Cub evenings to teamwork on the water, a look at life with our group.</p><a class="button dark" href="#photos">Explore the gallery ${arrow}</a><p class="gallery-intro-note">${galleryPhotos.length} photographs · Cubs, Scouts and our wider Scouting adventures</p></div><figure><img src="assets/gallery-11.jpg" width="1024" height="768" alt="Cubs, Scouts and leaders gathered together outdoors." fetchpriority="high"><figcaption>Friendship. Practical skills. A place to belong.</figcaption></figure></section><section class="gallery-section content" id="photos" aria-labelledby="gallery-heading"><div class="gallery-heading"><div><h2 id="gallery-heading">Our adventures, together.</h2><p>Choose a collection, or enjoy a little of everything.</p></div><p id="gallery-count" role="status"></p></div><div class="gallery-filters" role="group" aria-label="Filter gallery photos">${Object.entries(galleryCategories).map(([key,label])=>`<button type="button" data-gallery-filter="${key}" aria-pressed="${key==='all'}">${label}</button>`).join('')}</div><div class="photo-grid" id="photo-grid"></div><div class="gallery-more"><button class="button dark" type="button" id="gallery-more">Show more photos ${arrow}</button></div><p class="gallery-contact">Questions about a photograph? <a class="inline-link" href="contact.html">Contact the group</a>.</p></section><dialog class="photo-viewer" id="photo-viewer" aria-labelledby="photo-title"><div class="photo-viewer-top"><p id="photo-position"></p><button class="close-dialog" type="button" aria-label="Close photo">×</button></div><div class="photo-stage"><img id="photo-large" alt=""></div><div class="photo-viewer-bottom"><div><p class="gallery-category" id="photo-category"></p><h2 id="photo-title"></h2><p id="photo-description"></p></div><div class="photo-controls"><button type="button" id="photo-previous" aria-label="Previous photo">←</button><button type="button" id="photo-next" aria-label="Next photo">→</button></div></div></dialog>${visit()}`;}
 
@@ -52,10 +67,10 @@ function setupGallery(){
  const grid=document.querySelector('#photo-grid');if(!grid)return;
  let filter='all',limit=12,selected=0;
  const viewer=document.querySelector('#photo-viewer');
- const subset=()=>galleryPhotos.filter(photo=>filter==='all'||photo.category===filter);
+ const subset=()=>galleryPhotos.filter(photo=>filter==='all'||photo.category===filter||photo.event===filter);
  function render(focusNew=false){
   const photos=subset(),previousCount=grid.children.length;
-  grid.innerHTML=photos.slice(0,limit).map(photo=>`<figure class="photo-card"><a href="${photo.src}" data-photo-open="${photo.number}" aria-label="Open photo ${photo.number}: ${photo.title}"><div class="photo-frame"><img src="${photo.src}" alt="${photo.alt}" width="1024" height="768" loading="lazy" decoding="async"><span class="photo-expand" aria-hidden="true">↗</span></div><figcaption><span class="gallery-category">${galleryCategories[photo.category]}</span><h3>${photo.title}</h3></figcaption></a></figure>`).join('');
+  grid.innerHTML=photos.slice(0,limit).map(photo=>`<figure class="photo-card${photo.event==='kontiki'?' kontiki-photo':''}"><a href="${photo.src}" data-photo-open="${photo.number}" aria-label="Open photo ${photo.number}: ${photo.title}"><div class="photo-frame"><img src="${photo.src}" alt="${photo.alt}" width="${photo.width}" height="${photo.height}" loading="lazy" decoding="async"><span class="photo-expand" aria-hidden="true">↗</span></div><figcaption><span class="gallery-category">${photoCollection(photo)}</span><h3>${photo.title}</h3></figcaption></a></figure>`).join('');
   document.querySelector('#gallery-count').textContent=`Showing ${Math.min(limit,photos.length)} of ${photos.length} photos`;
   document.querySelector('#gallery-more').hidden=limit>=photos.length;
   if(focusNew)grid.querySelectorAll('[data-photo-open]')[previousCount]?.focus();
@@ -65,7 +80,7 @@ function setupGallery(){
   const image=document.querySelector('#photo-large');image.src=photo.src;image.alt=photo.alt;
   document.querySelector('#photo-title').textContent=photo.title;
   document.querySelector('#photo-description').textContent=photo.alt;
-  document.querySelector('#photo-category').textContent=galleryCategories[photo.category];
+  document.querySelector('#photo-category').textContent=photoCollection(photo);
   document.querySelector('#photo-position').textContent=`Photo ${selected+1} of ${photos.length}`;
   document.querySelector('#photo-previous').disabled=selected===0;
   document.querySelector('#photo-next').disabled=selected===photos.length-1;
