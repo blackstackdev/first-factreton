@@ -146,7 +146,7 @@ function setupHomeSlideshow(){
   if(target===undefined)return;event.preventDefault();show(target);
  });
  document.addEventListener('visibilitychange',()=>{request++;schedule();});
- document.querySelectorAll('dialog').forEach(dialog=>dialog.addEventListener('close',schedule));
+ document.addEventListener('close',schedule,true);
  document.addEventListener('click',()=>{if(document.querySelector('dialog[open]')){request++;clearTimeout(timer);timer=null;}});
  motion.addEventListener('change',()=>{if(motion.matches)pause();});
  preload(1);schedule();
